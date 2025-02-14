@@ -46,6 +46,15 @@ namespace Infrastructure.Migrations
                 ('Vendedor', 'Ativo'),
                 ('Gerente', 'Ativo');
             ");
+
+            migrationBuilder.Sql(@"
+                INSERT INTO Users (Name, CPF, Email, Password, Language, Status) 
+                VALUES 
+                ('Alice Silva', '123.456.789-00', 'alice@email.com', 'Senha@123', 'Português', 'Ativo'),
+                ('Bruno Souza', '987.654.321-00', 'bruno@email.com', 'Senha@123', 'Inglês', 'Ativo'),
+                ('Carlos Mendes', '456.123.789-00', 'carlos@email.com', 'Senha@123', 'Espanhol', 'Ativo')
+
+            ");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

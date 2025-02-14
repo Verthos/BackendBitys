@@ -1,6 +1,7 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Repositories;
 using Infrastructure.DatabaseContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -21,7 +22,15 @@ namespace Infrastructure.Repositories
         {
             //_db.Users.Update(user);
         }
+        public IEnumerable<User> GetAllWithProfile()
+        {
+            return _db.Users.Include(u => u.Profile).ToList();
+        }
 
+        public User GetByIdWithProfile(int id)
+        {
+            return _db.Users.Include(u => u.Profile).FirstOrDefault(u => u.Id == id);
+        }
 
     }
 }

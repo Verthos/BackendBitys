@@ -1,8 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace Bitys.Controllers
 {
@@ -22,15 +20,13 @@ namespace Bitys.Controllers
         {
             try
             {
-                IEnumerable<User> users = _db.GetAll();
+                var users = _db.GetAllWithProfile(); 
                 return Ok(users);
-
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
 
         [HttpGet("{id}")]
@@ -38,14 +34,14 @@ namespace Bitys.Controllers
         {
             try
             {
-                return Ok(_db.GetFirstOrDefault(u => u.Id == id));
+                var user = _db.GetByIdWithProfile(id);
+                if (user == null) return NotFound($"Usuário com id {id} não encontrado.");
+                return Ok(user);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
-
         }
 
         [HttpPut("{id}")]
@@ -53,39 +49,40 @@ namespace Bitys.Controllers
         {
             try
             {
+                var existingUser = _db.GetByIdWithProfile(id);
+                if (existingUser == null) return NotFound($"Usuário com id {id} não encontrado.");
 
-                _db.Update(user);
+                existingUser.Name = user.Name;
+                existingUser.CPF = user.CPF;
+                existingUser.Email = user.Email;
+                existingUser.BirthDate = user.BirthDate;
+                existingUser.ProfileId = user.ProfileId; 
+                existingUser.Language = user.Language;
+                existingUser.Status = user.Status;
+
+                _db.Update(existingUser);
                 _db.Save();
-                return Ok($"User id: {id} atualizado");
-
+                return Ok($"Usuário id: {id} atualizado");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
-
-
-
         }
 
         [HttpPost]
         public ActionResult<User> CreateUser(User user)
         {
-
-                User newUser = user;
-                try
-                {
-                    _db.Add(newUser);
-                    _db.Save();
-                    return Created("Usuario criado", new { Message = $"O Usuário de nome {user.Name} foi criado" });
-                }
-                catch (Exception ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-            
-
+            try
+            {
+                _db.Add(user);
+                _db.Save();
+                return Created("Usuario criado", new { Message = $"O Usuário {user.Name} foi criado" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -93,17 +90,17 @@ namespace Bitys.Controllers
         {
             try
             {
-                _db.Remove(_db.GetFirstOrDefault(e => e.Id == id));
-                _db.Save();
-                return Ok($"User id:{id} was deleted");
+                var user = _db.GetByIdWithProfile(id);
+                if (user == null) return NotFound($"Usuário com id {id} não encontrado.");
 
+                _db.Remove(user);
+                _db.Save();
+                return Ok($"Usuário id:{id} foi deletado");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
         }
-
     }
 }

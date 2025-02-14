@@ -10,7 +10,14 @@ namespace Infrastructure.DatabaseContext
         {
         }
 
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Profile)
+                .WithMany(p => p.Users)
+                .HasForeignKey(u => u.ProfileId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
         public DbSet<Profile> Profiles { get; set; }
         public DbSet<User> Users { get; set; }
     }

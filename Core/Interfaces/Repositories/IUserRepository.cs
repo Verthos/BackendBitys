@@ -7,5 +7,8 @@ namespace Core.Interfaces.Repositories
     {
         void Update(User user);
         void Save();
+
+        IEnumerable<User> GetAllWithProfile();
+        User GetByIdWithProfile(int id);
     }
 }

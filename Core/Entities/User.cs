@@ -6,8 +6,6 @@ namespace Core.Entities
     public class User
     {
 
-
-
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string CPF {  get; set; } = string.Empty;
@@ -16,8 +14,10 @@ namespace Core.Entities
         public string? Password { get; set; }
         public string? Language { get; set; }
         public string Status { get; set; } = string.Empty;
+        public DateTime BirthDate { get; set; } 
 
-
+        public int ProfileId { get; set; }
+        public Profile? Profile { get; set; }
 
     }
 }
